@@ -6,7 +6,9 @@ Run certs.sh to generate server cert and key
 
 USAGE:
 
-       chmod +x certs.sh && ./certs.sh || echo Error running certs.sh
+       git clone https://github.com/pyCity/pyShells
+
+       cd pyShells; chmod +x certs.sh && ./certs.sh || echo Error running certs.sh
 
        python server.py 127.0.0.1 4444 --ssl
 
