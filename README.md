@@ -1,6 +1,7 @@
 # pyShells
 Client and server model in python 3 using only standard library. 
 Supports ssl encryption.
+TIP: ncat --ssl listener works just as well as client.py
 
 Run certs.sh to generate server cert and key
 
