@@ -8,4 +8,8 @@ USAGE: python server.py 127.0.0.1 4444 --ssl
        python client.py 127.0.0.1 4444 --ssl
 
 
-TODO: add "get" and "put" functionality, add threading
+TODO: 
+"get" and "put" functionality
+https option
+threading
+persistence
