@@ -60,7 +60,7 @@ def bind_sock(s, host, port):
             return s
         except socket.error as msg:
             print("Error binding socket: {}\n  Retrying...".format(str(msg)))
-            time.sleep(2)
+            time.sleep(3)
             attempts += 1
     s.close()
     sys.exit()
@@ -84,7 +84,7 @@ def send_commands(conn):
         while True:
             cmd = input()
             if cmd == 'exit':
-                # conn.close()
+                conn.send(str.encode("kill"))
                 break
             if len(str.encode(cmd)) > 0:
                 conn.send(str.encode(cmd))
@@ -99,6 +99,7 @@ def send_commands(conn):
 
 
 def main():
+
     host, port, enc = get_args()
 
     s = bind_sock(wrap_sock(enc), host, port)
