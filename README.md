@@ -18,9 +18,3 @@ USAGE:
 
 TODO: 
 "get" and "put" functionality
-
-https option
-
-threading
-
-persistence
