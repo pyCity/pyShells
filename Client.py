@@ -72,12 +72,6 @@ def serve_shell(s):
 
 
 
-def main():
-
-    host, port, enc = parse_args()
-
-    serve_shell(connect(host, port, enc))
-
-
 if __name__ == "__main__":
-    main()
+    host, port, enc = parse_args()
+    serve_shell(connect(host, port, enc))
