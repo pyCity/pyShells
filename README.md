@@ -1,5 +1,5 @@
 # pyShells
-Client and server model in python 3 using only standard library. 
+Client and server model in python 3 using standard library. 
 
 TIP: ncat --ssl listener can be used in place of server.py, but "exit" may not work properly
 
@@ -15,6 +15,3 @@ USAGE:
 
        python client.py 127.0.0.1 4444 --ssl
 
-
-TODO: 
-"get" and "put" functionality
