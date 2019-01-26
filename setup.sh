@@ -10,5 +10,6 @@ else
     openssl rsa -in server.orig.key -out server.key
     openssl req -new -key server.key -out server.csr
     openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+    openssl dhparam -5 -outform PEM -out dhparam.pem
     rm server.orig.key server.csr
 fi
