@@ -1,7 +1,7 @@
 # pyShells
 Client and server model in python 3 using standard library. 
 
-TIP: ncat --ssl listener can be used in place of server.py, but "exit" may not work properly
+TIP: ncat --ssl listener can be used in place of server.py if using proper certs
 
 Run setup.sh to generate server cert and key
 
