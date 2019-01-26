@@ -1,20 +1,22 @@
-"""
-Author       - pyCity
-Date         - 1/22/2019
-Version      - 1.5
-
-Usage:       - python server.py --ssl 127.0.0.1 4444
-
-Description: - Handler for client.py Supports SSL encryption.
-             - Run setup.sh to generate certs (Or use ncat --ssl instead)
-"""
-
+#!/usr/bin/env python3
 import socket
 import sys
 import argparse
 import ssl
 import time
 
+"""
+Author       - pyCity
+Date         - 1/22/2019
+Version      - 2.0
+
+Usage:       - python server.py --ssl 127.0.0.1 4444
+             - Run setup.sh to generate certs
+
+Description: - Handler for client.py Supports SSL encryption using
+             - a DHE-RSA-AES256-SHA256 cipher.
+
+"""
 
 def get_args():
     """Define host, port, and encryption variables"""
@@ -34,16 +36,20 @@ def get_args():
 def wrap_sock(enc=False):
     """Create and wrap socket"""
 
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        s = socket.socket(2, 1)
         if enc == True:
             print("SSL encryption enabled")
-            s = ssl.wrap_socket(s, server_side=True, certfile="server.crt", keyfile="server.key")
+            context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+            context.set_ciphers('DHE-RSA-AES256-SHA256')
+            context.load_dh_params("dhparam.pem")
+            context.load_cert_chain("server.crt", "server.key")
+            s = context.wrap_socket(s, do_handshake_on_connect=True, server_side=True)
         return s
     except socket.error as msg:
         print("Socket creation error: {}".format(str(msg)))
+        s.close()
         sys.exit()
-
 
 
 
@@ -93,8 +99,9 @@ def send_commands(conn):
                 print(client_response, end="")
 
     except KeyboardInterrupt:
-        # Pass because once we break out of the loop, we go back up to handle function and call conn.close; s.close
-        pass
+        conn.close()
+        s.close()
+        sys.exit()
 
 
 
