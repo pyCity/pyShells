@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
+
 """
 Author       - pyCity
 Date         - 1/22/2019
 Version      - 2.0
 
-Usage:       - python server.py --ssl 127.0.0.1 4444
+Usage:       - python server.py --tls 127.0.0.1 4444
              - Run setup.sh to generate certs
 
-Description: - Handler for client.py Supports SSL encryption using
+Description: - Handler for client.py Supports TLS encryption using
              - a DHE-RSA-AES256-SHA256 cipher.
-
 """
 
 import socket
@@ -18,17 +18,17 @@ import argparse
 import ssl
 import time
 
-def get_args():
+def parse_args():
     """Define host, port, and encryption variables"""
 
     parser = argparse.ArgumentParser(description="Python tcp server")
     parser.add_argument("host", help="IP address to bind for listening")
     parser.add_argument("port", help="Port to bind for listening", type=int)
-    parser.add_argument("--ssl", help="Enable SSL encryption", action="store_true")
+    parser.add_argument("--tls", help="Enable TLS encryption", action="store_true")
 
     # Array of parsed arguments
     args = parser.parse_args()
-    host, port, enc = args.host, args.port, args.ssl
+    host, port, enc = args.host, args.port, args.tls
     return host, port, enc
 
 
@@ -43,7 +43,7 @@ def wrap_sock(enc=False):
             context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
             context.set_ciphers('DHE-RSA-AES256-SHA256')
             context.load_dh_params("dhparam.pem")
-            context.load_cert_chain("server.crt", "server.key")
+            context.load_cert_chain(certfile="server.crt", keyfile="server.key")
             s = context.wrap_socket(s, do_handshake_on_connect=True, server_side=True)
         return s
     except socket.error as msg:
@@ -71,6 +71,7 @@ def bind_sock(s, host, port):
             attempts += 1
     s.close()
     sys.exit()
+
 
 
 def handle(s):
@@ -106,6 +107,6 @@ def send_commands(conn):
 
 
 if __name__ == "__main__":
-    host, port, enc = get_args()
+    host, port, enc = parse_args()
     s = bind_sock(wrap_sock(enc), host, port)
     handle(s)
